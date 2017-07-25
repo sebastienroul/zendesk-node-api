@@ -16,6 +16,17 @@ var Accessor = function(config, single, plural){
       })
     },
 
+    showMany: function(ids){
+      return new Promise(function(fufill, reject){
+        zdrequest.get('/' + plural + '/show_many.json?ids='+ids ).then(function(data){
+          var key = plural === 'search' ? 'results' : plural
+          fufill(data[key])
+        }).catch(function(err){
+          reject(err)
+        })
+      })
+    },
+
     show: function(id){
       return new Promise(function(fufill, reject){
         zdrequest.get('/' + plural + '/' + id + '.json').then(function(data){
@@ -31,6 +42,18 @@ var Accessor = function(config, single, plural){
       createData[single] = data
       return new Promise(function(fufill, reject){
         zdrequest.post('/' + plural + '.json', createData).then(function(data){
+          fufill(data)
+        }).catch(function(err){
+          reject(err)
+        })
+      })
+    },
+    
+    createOrUpdate: function(data){
+      var createData = {}
+      createData[single] = data
+      return new Promise(function(fufill, reject){
+        zdrequest.post('/' + plural + '/create_or_update.json', createData).then(function(data){
           fufill(data)
         }).catch(function(err){
           reject(err)
